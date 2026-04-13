@@ -11,10 +11,10 @@
             --bg-color: #0b0b0c;
             --tg-color: #0088cc;
             --wa-color: #25d366;
-            --max-color: #ff3b30; /* Цвет твоего градиента */
-            --tg-shadow: rgba(0, 136, 204, 0.2);
-            --wa-shadow: rgba(37, 211, 102, 0.2);
-            --max-shadow: rgba(255, 59, 48, 0.2);
+            --max-color: #ff3b30;
+            --tg-shadow: rgba(0, 136, 204, 0.4);
+            --wa-shadow: rgba(37, 211, 102, 0.4);
+            --max-shadow: rgba(255, 59, 48, 0.4);
         }
 
         body {
@@ -30,51 +30,88 @@
             background: radial-gradient(circle at center, #1a1a1c 0%, #0b0b0c 100%);
         }
 
+        /* Подсказка для пользователя */
+        .hint {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+            color: #aaa;
+            animation: pulse 2s infinite ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+            50% { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+        }
+
         .profile-card {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 50px 40px;
-            border-radius: 40px;
+            border-radius: 45px;
             text-align: center;
             width: 320px;
+            position: relative;
             box-shadow: 0 40px 80px rgba(0,0,0,0.7);
             animation: cardAppear 1s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        @keyframes cardAppear {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
+        /* Контейнер-смартфон */
         .qr-container {
             position: relative;
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 300px; /* Сделали вытянутым как телефон */
             margin: 0 auto 35px;
-            background: white;
-            border-radius: 24px;
+            background: #fff;
+            border-radius: 35px;
             padding: 15px;
             box-sizing: border-box;
-            box-shadow: 0 0 20px rgba(255,255,255,0.03); /* Начальная тень */
+            overflow: hidden;
+            border: 6px solid #1a1a1c; /* Рамка телефона */
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* "Челка" телефона */
+        .qr-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 18px;
+            background: #1a1a1c;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
         }
 
         .qr-container img {
             width: 100%;
-            height: 100%;
-            display: none; /* Скрыты по умолчанию */
-            border-radius: 10px;
-            animation: qrIn 0.4s ease;
+            margin-top: 30px; /* Отступ от челки */
+            display: none;
+            border-radius: 15px;
         }
 
-        .qr-container img.active { display: block; }
+        .qr-container img.active { 
+            display: block; 
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-        @keyframes qrIn {
-            from { opacity: 0; transform: translateY(10px) scale(0.95); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.8); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
+        /* Твои старые стили селектора и кнопок */
         .selector {
             display: flex;
             justify-content: center;
@@ -93,37 +130,33 @@
             font-size: 24px;
             color: #666;
             background: transparent;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        .btn:hover { transform: translateY(-4px); color: white; }
         .btn.active { color: white; background: rgba(255,255,255,0.08); }
-
         .btn-tg.active { color: var(--tg-color); }
         .btn-wa.active { color: var(--wa-color); }
         .btn-mx.active { color: var(--max-color); }
-
-        .btn-mx img { width: 28px; height: 28px; opacity: 0.5; filter: grayscale(1); transition: opacity 0.3s; }
+        
+        .btn-mx img { width: 28px; height: 28px; opacity: 0.5; filter: grayscale(1); }
         .btn-mx.active img { opacity: 1; filter: grayscale(0); }
 
-        h2 { font-weight: 600; margin-bottom: 5px; font-size: 26px; letter-spacing: -0.5px; }
+        h2 { font-weight: 600; margin: 0 0 5px; font-size: 26px; }
         p { color: #888; font-size: 14px; margin-bottom: 30px; }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
 <div class="profile-card">
+    <div class="hint"><i class="fas fa-qrcode"></i> Сканируй, чтобы связаться</div>
     <h2>Kirill</h2>
     <p>Professional Developer</p>
 
-<div class="qr-container" id="qrContainer">
-    <img src="my_tg.png" id="qr-tg" class="active">
-    <img src="my_wa.png" id="qr-wa">
-    <img src="max_qr.png" id="qr-mx">
-</div>
+    <div class="qr-container" id="qrContainer">
+        <img src="my_tg.png" id="qr-tg" class="active">
+        <img src="my_wa.png" id="qr-wa">
+        <img src="max_qr.png" id="qr-mx">
+    </div>
 
     <div class="selector">
         <button class="btn btn-tg active" onclick="showQR('tg')"><i class="fab fa-telegram"></i></button>
@@ -136,21 +169,31 @@
 
 <script>
     function showQR(platform) {
-        // Убираем активные классы у кнопок и картинок
+        // 1. Управляем активными классами
         document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.qr-container img').forEach(i => i.classList.remove('active'));
 
-        // Добавляем активные классы нужным элементам
         document.querySelector('.btn-' + platform).classList.add('active');
         document.getElementById('qr-' + platform).classList.add('active');
 
-        // Меняем свечение контейнера в зависимости от платформы
+        // 2. Настраиваем цвета для каждой платформы
+        const config = {
+            'tg': { shadow: 'var(--tg-shadow)', bg: '#002b40' },
+            'wa': { shadow: 'var(--wa-shadow)', bg: '#0d2d18' },
+            'mx': { shadow: 'var(--max-shadow)', bg: '#330c0a' }
+        };
+
+        // 3. Анимируем свечение смартфона
         const container = document.getElementById('qrContainer');
-        if(platform === 'tg') container.style.boxShadow = '0 0 30px rgba(0, 136, 204, 0.4)';
-        if(platform === 'wa') container.style.boxShadow = '0 0 30px rgba(37, 211, 102, 0.4)';
-        if(platform === 'mx') container.style.boxShadow = '0 0 30px rgba(255, 59, 48, 0.4)';
+        container.style.boxShadow = `0 15px 40px ${config[platform].shadow}`;
+
+        // 4. Плавная смена фона всей страницы
+        const body = document.getElementById('mainBody');
+        body.style.background = `radial-gradient(circle at center, ${config[platform].bg} 0%, #0b0b0c 100%)`;
+        body.style.transition = 'background 0.8s ease'; // Плавный переход цвета
     }
-    // Устанавливаем начальное свечение при загрузке
+    
+    // Инициализация при загрузке
     showQR('tg');
 </script>
 
